@@ -48,6 +48,7 @@ bash start.sh
 ```
 
 Open: **http://localhost:5173**
+live vercel :https://gharpayye-crm.vercel.app/login
 
 ---
 
