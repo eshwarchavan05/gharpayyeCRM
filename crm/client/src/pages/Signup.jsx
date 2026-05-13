@@ -156,8 +156,8 @@ export default function Signup() {
 
             <button 
               type="submit" 
-              disabled={loading || (touched.email && !isFormValid)} 
-              className={`btn-primary w-full flex items-center justify-center gap-2 py-2.5 mt-6 ${(touched.email && !isFormValid) ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={loading || ((touched.name || touched.email || touched.password) && !isFormValid)} 
+              className={`btn-primary w-full flex items-center justify-center gap-2 py-2.5 mt-6 ${((touched.name || touched.email || touched.password) && !isFormValid) ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Zap size={14} />}
               Create Account

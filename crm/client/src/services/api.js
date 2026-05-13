@@ -9,9 +9,15 @@ const api = axios.create({
 api.interceptors.response.use(
   res => res,
   err => {
-    if (err.response?.status === 401) {
+    const url = err.config?.url || '';
+    const isCredentialRequest =
+      url.includes('/auth/login') || url.includes('/auth/signup');
+
+    // Do not treat failed login/signup (401/400) as an expired session.
+    if (err.response?.status === 401 && !isCredentialRequest) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      delete api.defaults.headers.common['Authorization'];
       window.location.href = '/login';
     }
     if (err.response?.status === 403) {
