@@ -31,7 +31,15 @@ export default function Login() {
       toast.success('Welcome back!');
       navigate('/');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Invalid email or password');
+      const data = err.response?.data;
+      const serverMsg = typeof data === 'object' && data !== null && typeof data.message === 'string' ? data.message : null;
+      const toastId = 'login-error';
+      let msg;
+      if (serverMsg) msg = serverMsg;
+      else if (!err.response) msg = 'Cannot reach the API. Run: cd server && npm start';
+      else if ([502, 504].includes(err.response.status)) msg = 'Backend not running (cd server && npm start).';
+      else msg = 'Invalid email or password';
+      toast.error(msg, { id: toastId, duration: 5000 });
     } finally {
       setLoading(false);
     }

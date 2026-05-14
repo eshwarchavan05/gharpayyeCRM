@@ -37,6 +37,7 @@ router.post('/signup', async (req, res) => {
     
     res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
+    console.error('[signup]', err.message);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -60,6 +61,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET_KEY, { expiresIn: '7d' });
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (err) {
+    console.error('[login]', err.message);
     res.status(500).json({ message: 'Internal server error' });
   }
 });

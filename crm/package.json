@@ -1,0 +1,10 @@
+{
+  "name": "gharpayy-crm",
+  "private": true,
+  "description": "Run scripts from the crm folder without cd client/server",
+  "scripts": {
+    "dev": "npm run dev --prefix client",
+    "server": "npm start --prefix server",
+    "server:dev": "npm run dev --prefix server"
+  }
+}

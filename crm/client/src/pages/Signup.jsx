@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, User, Mail, Lock, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -25,17 +25,44 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setTouched({ name: true, email: true, password: true });
-    
+
     if (!isFormValid) return;
-    
+
     setLoading(true);
+    const toastId = 'signup-error';
     try {
       await signup(form.name.trim(), form.email.trim(), form.password, form.role);
+      toast.dismiss(toastId);
       toast.success('Account securely created!');
       navigate('/');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to create account. Please try again.');
+      const data = err.response?.data;
+      const serverMsg = typeof data === 'object' && data !== null && typeof data.message === 'string' ? data.message : null;
+
+      let msg;
+      if (serverMsg) {
+        msg = serverMsg;
+      } else if (err.code === 'ECONNABORTED') {
+        msg = 'Request timed out. Try again.';
+      } else if (!err.response) {
+        msg =
+          'Cannot reach the API. In another terminal run: cd server && npm start (MongoDB must be running).';
+      } else {
+        const st = err.response.status;
+        // Vite proxy often returns 502/504 HTML when nothing listens on port 5000
+        if (st === 502 || st === 504) {
+          msg =
+            'Backend is not running. Open a second terminal: cd server && npm start — then try again.';
+        } else if (st === 500) {
+          msg =
+            'Server error while creating the account. Check the server terminal and MongoDB (MONGO_URI in server/.env).';
+        } else {
+          msg = `Sign-up failed (HTTP ${st}). Check the backend is running on port 5000.`;
+        }
+      }
+      toast.error(msg, { id: toastId, duration: 6000 });
     } finally {
       setLoading(false);
     }
@@ -134,11 +161,14 @@ export default function Signup() {
                     <div className={`text-[10px] flex items-center gap-1 transition-colors ${/[A-Z]/.test(form.password) ? 'text-green-600 dark:text-green-400' : 'text-muted'}`}>
                       <CheckCircle2 size={10} /> 1 Uppercase
                     </div>
+                    <div className={`text-[10px] flex items-center gap-1 transition-colors ${/[a-z]/.test(form.password) ? 'text-green-600 dark:text-green-400' : 'text-muted'}`}>
+                      <CheckCircle2 size={10} /> 1 Lowercase
+                    </div>
                     <div className={`text-[10px] flex items-center gap-1 transition-colors ${/[0-9]/.test(form.password) ? 'text-green-600 dark:text-green-400' : 'text-muted'}`}>
                       <CheckCircle2 size={10} /> 1 Number
                     </div>
                     <div className={`text-[10px] flex items-center gap-1 transition-colors ${/[^A-Za-z0-9]/.test(form.password) ? 'text-green-600 dark:text-green-400' : 'text-muted'}`}>
-                      <CheckCircle2 size={10} /> 1 Special Chars
+                      <CheckCircle2 size={10} /> 1 Special Char
                     </div>
                   </div>
                 </div>

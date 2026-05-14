@@ -1,4 +1,8 @@
 #!/bin/bash
+# Always run from this script's directory (so `bash start.sh` works from anywhere)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR" || exit 1
+
 echo "🏗️  Starting Gharpayy CRM..."
 echo ""
 
