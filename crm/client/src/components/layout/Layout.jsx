@@ -3,11 +3,22 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import AddLeadModal from '../common/AddLeadModal';
+import { useCrm } from '../../context/CrmContext';
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addLeadOpen, setAddLeadOpen] = useState(false);
   const [isPipMode, setIsPipMode] = useState(false);
+  const { addLead } = useCrm();
+
+  const handleSaveLead = async (form) => {
+    try {
+      await addLead(form);
+      setAddLeadOpen(false);
+    } catch (err) {
+      // Error toast already displayed in addLead
+    }
+  };
 
   return (
     <div className={`min-h-screen bg-main ${isPipMode ? 'border-4 border-accent' : ''} transition-all duration-300`}>
@@ -26,7 +37,12 @@ export default function Layout() {
         </main>
       </div>
       
-      {addLeadOpen && <AddLeadModal onClose={() => setAddLeadOpen(false)} />}
+      {addLeadOpen && (
+        <AddLeadModal
+          onClose={() => setAddLeadOpen(false)}
+          onSave={handleSaveLead}
+        />
+      )}
     </div>
   );
 }

@@ -4,7 +4,9 @@
   "description": "Run scripts from the crm folder without cd client/server",
   "scripts": {
     "dev": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
     "server": "npm start --prefix server",
-    "server:dev": "npm run dev --prefix server"
+    "server:dev": "npm run dev --prefix server",
+    "test": "npm test --prefix server"
   }
 }
